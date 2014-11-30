@@ -9,7 +9,7 @@ class RegExCommandParser:
     def __init__(self):
         self.command_patterns = []
 
-    def add_to_command_pattern(self, command_reg_ex, callback=None):
+    def add_to_command_pattern(self, command_reg_ex, event_name=None, callback=None):
         '''
         Add a regular expression used to parse a command string to determine
         if it is a valid command
@@ -22,7 +22,7 @@ class RegExCommandParser:
         :return: void
         '''
         p1 = re.compile(command_reg_ex)
-        self.command_patterns.append({'command_pattern': p1, 'callback': callback})
+        self.command_patterns.append({'command_pattern': p1, 'event_name': event_name, 'callback': callback})
 
     def process_command(self, command_string, execute_command=False):
         '''
@@ -40,6 +40,10 @@ class RegExCommandParser:
             if match:
                 for group in match.groups():
                     parsed_command.append(group)
+                if command_pattern_rec['event_name'] is not None:
+                    parsed_command.append(command_pattern_rec['event_name'])
+                else:
+                    parsed_command.append('')
 
                 if execute_command:
                     if command_pattern_rec['callback'] is not None:
@@ -55,11 +59,11 @@ class RegExCommandParser:
 if __name__ == "__main__":
     cmd_parser = RegExCommandParser()
 
-    cmd_parser.add_to_command_pattern("^(Alarm clock)\s+(set\s+alarm)\s+_TIME\s+([\w:\s]*)\.\s+_END_TIME", getattr(CommandCallbacks, 'cb1'))
+    cmd_parser.add_to_command_pattern("^(Alarm clock)\s+(set\s+alarm)\s+_TIME\s+([\w:\s]*)\.\s+_END_TIME", 'set_alarm', getattr(CommandCallbacks, 'cb1'))
     cmd_parser.add_to_command_pattern("^(Alarm clock)\s+(display)\s+(status)")
     cmd_parser.add_to_command_pattern("^(Alarm clock)\s+(display)\s+(wealth)")
     cmd_parser.add_to_command_pattern("^(Alarm clock)\s+(display)\s+(weather\s+forecast)")
-    cmd_parser.add_to_command_pattern("^(Alarm clock)\s+(say)\s+(weather\s+forecast)", getattr(CommandCallbacks, 'cb2'))
+    cmd_parser.add_to_command_pattern("^(Alarm clock)\s+(say)\s+(weather\s+forecast)", 'say_forecast', getattr(CommandCallbacks, 'cb2'))
 
     cmd = cmd_parser.process_command("Alarm clock set alarm _TIME 7:00 AM. _END_TIME")
     print cmd
