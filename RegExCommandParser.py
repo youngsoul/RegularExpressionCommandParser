@@ -36,7 +36,7 @@ class RegExCommandParser:
         '''
         parsed_command = []
         for command_pattern_rec in self.command_patterns:
-            match = command_pattern_rec['command_pattern'].match(command_string)
+            match = command_pattern_rec['command_pattern'].search(command_string)
             if match:
                 for group in match.groups():
                     parsed_command.append(group)
@@ -65,24 +65,73 @@ if __name__ == "__main__":
     cmd_parser.add_to_command_pattern("^(Alarm clock)\s+(display)\s+(weather\s+forecast)")
     cmd_parser.add_to_command_pattern("^(Alarm clock)\s+(say)\s+(weather\s+forecast)", 'say_forecast', getattr(CommandCallbacks, 'cb2'))
 
-    cmd = cmd_parser.process_command("Alarm clock set alarm _TIME 7:00 AM. _END_TIME")
-    print cmd
-    cmd = cmd_parser.process_command("Alarm clock set alarm _TIME 7:00 AM. _END_TIME",True)
 
-    cmd = cmd_parser.process_command("Alarm clock display status")
-    print cmd
+    sendemailto_reg_ex = '((?:[A-Z][a-z]+)).*?(".*?").*?((?:[a-z][a-z]+)).*?((?:[a-z][a-z]+)).*?([+-]?\d*\.\d+)(?![-+0-9\.]).*?((?:[a-z][a-z]+)).*?(".*?")'
+    cmd_parser.add_to_command_pattern(sendemailto_reg_ex, 'sendemailto', getattr(CommandCallbacks, 'sendemailto'))
 
-    cmd = cmd_parser.process_command("open the pod door hal")
-    print cmd
 
-    cmd = cmd_parser.process_command("Alarm clock display wealth")
+    value_to_parse = "Alarm clock set alarm _TIME 7:00 AM. _END_TIME"
+    cmd = cmd_parser.process_command(value_to_parse)
+    print "------------Start-----------------"
+    print value_to_parse
     print cmd
+    print "-----------End------------------"
 
-    cmd = cmd_parser.process_command("Alarm clock display well")
+    value_to_parse = "Alarm clock set alarm _TIME 7:00 AM. _END_TIME"
+    cmd = cmd_parser.process_command(value_to_parse,True)
+    print "------------Start-----------------"
+    print value_to_parse
     print cmd
+    print "-----------End------------------"
 
-    cmd = cmd_parser.process_command("Alarm clock display weather forecast")
+    value_to_parse = "Alarm clock display status"
+    cmd = cmd_parser.process_command(value_to_parse)
+    print "------------Start-----------------"
+    print value_to_parse
     print cmd
+    print "-----------End------------------"
 
-    cmd_parser.process_command("Alarm clock say weather forecast",True)
+    value_to_parse = "open the pod door hal"
+    cmd = cmd_parser.process_command(value_to_parse)
+    print "------------Start-----------------"
+    print value_to_parse
+    print cmd
+    print "-----------End------------------"
+
+    value_to_parse = "Alarm clock display wealth"
+    cmd = cmd_parser.process_command(value_to_parse)
+    print "------------Start-----------------"
+    print value_to_parse
+    print cmd
+    print "-----------End------------------"
+
+    value_to_parse = "Alarm clock display well"
+    cmd = cmd_parser.process_command(value_to_parse)
+    print "------------Start-----------------"
+    print value_to_parse
+    print cmd
+    print "-----------End------------------"
+
+    value_to_parse = "Alarm clock display weather forecast"
+    cmd = cmd_parser.process_command(value_to_parse)
+    print "------------Start-----------------"
+    print value_to_parse
+    print cmd
+    print "-----------End------------------"
+
+    value_to_parse = "Alarm clock say weather forecast"
+    cmd_parser.process_command(value_to_parse,True)
+    print "------------Start-----------------"
+    print value_to_parse
+    print cmd
+    print "-----------End------------------"
+
+
+    value_to_parse = 'Whenever "my test string" goes above 3.1415298 sendemailto "me@me.com,you@you.com"'
+    cmd = cmd_parser.process_command(value_to_parse,True)
+    print "------------Start-----------------"
+    print value_to_parse
+    print cmd
+    print "-----------End------------------"
+
 
